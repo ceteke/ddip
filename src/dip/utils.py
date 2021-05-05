@@ -31,4 +31,4 @@ def remove_center(img, size):
 
 
 def psnr(gt, y, axes=None):
-    return -20 * np.log10(np.mean(np.square(gt - y), axis=axes))
+    return -10 * np.log10(np.mean(np.square(gt - y), axis=axes))
