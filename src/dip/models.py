@@ -20,8 +20,9 @@ def get_loss(mask):
     return _loss
 
 
-def get_dip_model(input_size, mask, optimizer=None):
+def get_dip_model(input_size, mask, d1=False, optimizer=None):
     model = hour_glass(input_size)
+
     loss = get_loss(mask)
     optimizer = get_optimizer() if optimizer is None else optimizer
 
@@ -29,8 +30,9 @@ def get_dip_model(input_size, mask, optimizer=None):
     return model
 
 
-def get_dd_model(input_size, mask, k, optimizer=None):
+def get_dd_model(input_size, mask, k, d1=False, optimizer=None):
     model = decoder(input_size, k)
+
     loss = get_loss(mask)
     optimizer = get_optimizer() if optimizer is None else optimizer
 
@@ -53,9 +55,7 @@ def decoder(input_size, k):
     return model
 
 
-def hour_glass(input_size, sigm=True):
-    act = 'sigmoid' if sigm else 'linear'
-
+def hour_glass(input_size):
     inputs = tkl.Input(input_size, batch_size=1)
     conv1 = tkl.Conv2D(32, 3, activation='relu', padding='same', strides=2)(inputs)
     conv2 = tkl.Conv2D(64, 3, activation='relu', padding='same', strides=2)(conv1)
@@ -65,7 +65,7 @@ def hour_glass(input_size, sigm=True):
     up5 = tkl.Conv2DTranspose(128, 3, activation='relu', padding='same', strides=2)(conv4)
     up6 = tkl.Conv2DTranspose(64, 3, activation='relu', padding='same', strides=2)(up5)
     up7 = tkl.Conv2DTranspose(32, 3, activation='relu', padding='same', strides=2)(up6)
-    up8 = tkl.Conv2DTranspose(3, 3, activation=act, padding='same', strides=2)(up7)
+    up8 = tkl.Conv2DTranspose(3, 3, activation='sigmoid', padding='same', strides=2)(up7)
 
     model = tf.keras.Model(inputs=inputs, outputs=up8)
 
